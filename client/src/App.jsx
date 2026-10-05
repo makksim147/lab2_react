@@ -5,6 +5,7 @@ import Catalog from './pages/Catalog'
 import Cart from './pages/Cart'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import Register from './pages/Register'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -19,12 +20,13 @@ function App() {
           <Route path='/' element={<Catalog />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
           <Route path='/dashboard' element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
           } />
-          <Route path='*' element={<Navigate to='/' />} />
+          <Route path='*' element={<Catalog />}/>
         </Routes>
       </main>
     </div>

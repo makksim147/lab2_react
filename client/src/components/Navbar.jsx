@@ -8,7 +8,7 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar__logo">TechStore</div>
+      <div className="navbar__logo">KaifStore</div>
 
       <div className="navbar__links">
         <NavLink

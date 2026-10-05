@@ -14,7 +14,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <h1 className="page-title">Привет, {user.name}</h1>
+      <h1 className="page-title">Рады видеть вас снова!</h1>
 
       <div className="dashboard__stats">
         <div className="stat-card">
