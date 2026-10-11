@@ -1,39 +1,36 @@
 import { useState } from 'react'
 import { useNavigate, Navigate, Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import { login as apiLogin } from '../api/api'
+import { useAuth } from '../context/AuthContext'
 
-function Login() {
-  const [email, setLogin] = useState('')
+export default function Login() {
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [errors, setError] = useState({})
-  const [serveError, setServerError] = useState('')
+  const [errors, setErrors] = useState({})
+  const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
-  
+
   const navigate = useNavigate()
   const { user, setUser } = useAuth()
 
-  if (user) {
-    return <Navigate to='/dashboard' replace />
-  }
+  if (user) return <Navigate to="/dashboard" replace />
 
+  // Валидация формы перед отправкой
   function validate() {
     const errs = {}
-    if (!email) errs.email = 'Email обязательный'
-    else if (!/^\S+@\S+\.\S+$/.test(email)) errs.email = "Некорректный email"
-
-    if (!password) errs.password = "Пароль обязатальный"
-    else if (password < 8) errs.password = "Пароль должен быть больше 8 символов"
-
+    if (!email) errs.email = 'Email обязателен'
+    else if (!/^\S+@\S+\.\S+$/.test(email)) errs.email = 'Некорректный email'
+    if (!password) errs.password = 'Пароль обязателен'
     return errs
   }
 
+  // Отправка формы логина
   async function handleSubmit(e) {
     e.preventDefault()
     setServerError('')
 
     const errs = validate()
-    setError(errs)
+    setErrors(errs)
     if (Object.keys(errs).length > 0) return
 
     setLoading(true)
@@ -41,11 +38,9 @@ function Login() {
       const userData = await apiLogin(email, password)
       setUser(userData)
       navigate('/dashboard')
-    }
-    catch (err) {
+    } catch (err) {
       setServerError(err.message)
-    }
-    finally {
+    } finally {
       setLoading(false)
     }
   }
@@ -59,12 +54,12 @@ function Login() {
           <label className="form__label">Email</label>
           <input
             className="form__input"
-            type="text"
+            type="email"
             value={email}
-            onChange={e => setLogin(e.target.value)}
-            placeholder="example@gmail.com"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@mail.ru"
           />
-          {errors.email && <p className='form_error'>{errors.email}</p>}
+          {errors.email && <p className="form__error">{errors.email}</p>}
         </div>
 
         <div className="form__group">
@@ -73,30 +68,22 @@ function Login() {
             className="form__input"
             type="password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Введите пароль"
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="admin123"
           />
-          {errors.password && <p className='form_error'>{errors.password}</p>}
+          {errors.password && <p className="form__error">{errors.password}</p>}
         </div>
 
-        {serveError && <p className='form_error'>{serveError}</p>}
+        {serverError && <p className="form__error">{serverError}</p>}
 
         <button className="btn btn--add" type="submit" disabled={loading}>
-          {loading ? 'Вход' : 'Войти'}
+          {loading ? 'Вход...' : 'Войти'}
         </button>
 
         <p className="form__hint">
-          Доступные аккаунты:<br />
-          admin@gmail.com / admin123<br />
-          user@gmail.com / user123
-        </p>
-
-        <p className="form__hint">
-            Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
+          Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
         </p>
       </form>
     </div>
   )
 }
-
-export default Login

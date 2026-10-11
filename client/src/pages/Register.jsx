@@ -1,26 +1,36 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { register as apiRegister } from '../api/api'
 
 export default function Register() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [form, setForm] = useState({
+    full_name: '',
+    email: '',
+    password: '',
+    phone: '',
+  })
   const [errors, setErrors] = useState({})
   const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
 
+  function update(field, value) {
+    setForm((prev) => ({ ...prev, [field]: value }))
+  }
+
+  // Валидация полей регистрации
   function validate() {
     const errs = {}
-    if (!email) errs.email = 'Email обязателен'
-    else if (!/^\S+@\S+\.\S+$/.test(email)) errs.email = 'Некорректный email'
-
-    if (!password) errs.password = 'Пароль обязателен'
-    else if (password.length < 5) errs.password = 'Минимум 5 символов'
-
+    if (!form.full_name.trim()) errs.full_name = 'Имя обязательно'
+    if (!form.email) errs.email = 'Email обязателен'
+    else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = 'Некорректный email'
+    if (!form.password) errs.password = 'Пароль обязателен'
+    else if (form.password.length < 5) errs.password = 'Минимум 5 символов'
     return errs
   }
 
+  // Отправка формы регистрации
   async function handleSubmit(e) {
     e.preventDefault()
     setServerError('')
@@ -31,16 +41,7 @@ export default function Register() {
 
     setLoading(true)
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Ошибка регистрации')
-
-      // После успешной регистрации — на логин
+      await apiRegister(form.full_name, form.email, form.password, form.phone)
       navigate('/login')
     } catch (err) {
       setServerError(err.message)
@@ -55,15 +56,38 @@ export default function Register() {
 
       <form className="login__form" onSubmit={handleSubmit}>
         <div className="form__group">
+          <label className="form__label">ФИО</label>
+          <input
+            className="form__input"
+            type="text"
+            value={form.full_name}
+            onChange={(e) => update('full_name', e.target.value)}
+            placeholder="Иванов Иван Иванович"
+          />
+          {errors.full_name && <p className="form__error">{errors.full_name}</p>}
+        </div>
+
+        <div className="form__group">
           <label className="form__label">Email</label>
           <input
             className="form__input"
             type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            value={form.email}
+            onChange={(e) => update('email', e.target.value)}
             placeholder="example@mail.ru"
           />
           {errors.email && <p className="form__error">{errors.email}</p>}
+        </div>
+
+        <div className="form__group">
+          <label className="form__label">Телефон</label>
+          <input
+            className="form__input"
+            type="tel"
+            value={form.phone}
+            onChange={(e) => update('phone', e.target.value)}
+            placeholder="+79001234567"
+          />
         </div>
 
         <div className="form__group">
@@ -71,8 +95,8 @@ export default function Register() {
           <input
             className="form__input"
             type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
+            value={form.password}
+            onChange={(e) => update('password', e.target.value)}
             placeholder="минимум 5 символов"
           />
           {errors.password && <p className="form__error">{errors.password}</p>}

@@ -1,42 +1,62 @@
-import { createContext, useContext, useReducer } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import * as api from '../api/api'
+import { useAuth } from './AuthContext'
 
 const CartContext = createContext()
 
-function cartReducer(state, action) {
-  switch (action.type) {
-    case 'ADD': {
-      const existing = state.find(i => i.id === action.payload.id)
-      if (existing) {
-        return state.map(i =>
-          i.id === action.payload.id ? { ...i, qty: i.qty + 1 } : i
-        )
-      }
-      return [...state, { ...action.payload, qty: 1 }]
-    }
-    case 'REMOVE':
-      return state.filter(i => i.id !== action.payload)
-    case 'CLEAR':
-      return []
-    default:
-      return state
-  }
-}
-
 export function CartProvider({ children }) {
-  const [cart, dispatch] = useReducer(cartReducer, [])
+  const { user } = useAuth()
+  const [cart, setCart] = useState([])
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(false)
 
-  const addToCart = (product) => dispatch({ type: 'ADD', payload: product })
-  const removeFromCart = (id) => dispatch({ type: 'REMOVE', payload: id })
-  const clearCart = () => dispatch({ type: 'CLEAR' })
+  // Загрузка корзины с сервера для текущего пользователя
+  const loadCart = useCallback(async () => {
+    if (!user) {
+      setCart([])
+      setTotal(0)
+      return
+    }
+    setLoading(true)
+    try {
+      const data = await api.getCart(user.id)
+      setCart(data.items)
+      setTotal(data.total)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }, [user])
 
-  const total = cart.reduce(
-    (sum, item) => sum + Number(item.price) * (item.qty || 1),
-    0
-  )
+  // Перезагружаем корзину при смене пользователя
+  useEffect(() => {
+    loadCart()
+  }, [loadCart])
+
+  // Добавить услугу в корзину
+  async function addToCart(service) {
+    if (!user) throw new Error('Нужно войти в аккаунт')
+    await api.addToCart(user.id, service.id)
+    await loadCart()
+  }
+
+  // Удалить позицию из корзины
+  async function removeFromCart(cartItemId) {
+    await api.removeFromCart(cartItemId)
+    await loadCart()
+  }
+
+  // Очистить корзину
+  async function clearCart() {
+    if (!user) return
+    await api.clearCart(user.id)
+    await loadCart()
+  }
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, clearCart, total }}
+      value={{ cart, total, loading, addToCart, removeFromCart, clearCart, reload: loadCart }}
     >
       {children}
     </CartContext.Provider>

@@ -6,7 +6,7 @@
   box-sizing: border-box;
 }
 
-.app.dark {
+:root {
   --bg: #0e0e0e;
   --bg-secondary: #161616;
   --border: #2a2a2a;
@@ -16,29 +16,18 @@
   --accent-hover: #d4ff33;
   --danger: #ff4d4d;
   --card-bg: #111;
-}
-
-.app.light {
-  --bg: #f5f5f5;
-  --bg-secondary: #ffffff;
-  --border: #e0e0e0;
-  --text: #1a1a1a;
-  --text-muted: #888;
-  --accent: #5c00e6;
-  --accent-hover: #7a00ff;
-  --danger: #e74c3c;
-  --card-bg: #ffffff;
+  --glass: #151515;
 }
 
 body {
   font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
 }
 
 .app {
   min-height: 100vh;
   background-color: var(--bg);
   color: var(--text);
-  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .main {
@@ -56,6 +45,7 @@ body {
   text-transform: uppercase;
 }
 
+/* NAVBAR */
 .navbar {
   display: flex;
   align-items: center;
@@ -73,12 +63,27 @@ body {
   font-size: 1.8rem;
   letter-spacing: 3px;
   color: var(--accent);
+  text-decoration: none;
 }
 
 .navbar__links {
   display: flex;
   gap: 30px;
   align-items: center;
+  margin-left: 60px;
+}
+
+.navbar__right {
+  margin-left: auto;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.navbar__user {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
 }
 
 .nav-link {
@@ -110,6 +115,23 @@ body {
   background: var(--accent);
 }
 
+.nav-link--btn {
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.nav-link--btn:hover {
+  color: var(--danger);
+}
+
 .navbar__badge {
   display: inline-flex;
   align-items: center;
@@ -118,89 +140,14 @@ body {
   color: var(--bg);
   font-size: 0.7rem;
   font-weight: 700;
-  width: 18px;
+  min-width: 18px;
   height: 18px;
   border-radius: 50%;
   margin-left: 6px;
+  padding: 0 4px;
 }
 
-.theme-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 1px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-}
-
-.theme-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.catalog {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-}
-
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-}
-
-.card__image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
-  filter: grayscale(20%);
-  transition: filter 0.3s ease;
-}
-
-.card:hover .card__image {
-  filter: grayscale(0%);
-}
-
-.card__info {
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-}
-
-.card__name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.card__price {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.8rem;
-  letter-spacing: 2px;
-  color: var(--accent);
-}
-
+/* КНОПКИ */
 .btn {
   border: none;
   font-family: 'Inter', sans-serif;
@@ -222,6 +169,11 @@ body {
 
 .btn--add:hover {
   background: var(--accent-hover);
+}
+
+.btn--add:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .btn--remove {
@@ -251,11 +203,145 @@ body {
   color: var(--danger);
 }
 
+.btn--small {
+  padding: 6px 14px;
+  font-size: 0.7rem;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn--small:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ФИЛЬТРЫ / КАТАЛОГ */
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filters .form__input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.catalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+/* КАРТОЧКА */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.card__link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card__image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(20%);
+  transition: filter 0.3s ease;
+}
+
+.card:hover .card__image {
+  filter: grayscale(0%);
+}
+
+.card__info {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.card__name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card__category {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 2px;
+  align-self: flex-start;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.card__desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.card__duration {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.card__price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-top: auto;
+}
+
+/* КОРЗИНА */
 .cart {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 30px;
+}
+
+.cart__empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 60px 20px;
+}
+
+.cart__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .cart__item {
@@ -289,17 +375,30 @@ body {
   color: var(--text);
 }
 
-.cart__price {
+.cart__meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.cart__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.cart__subtotal {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 1.3rem;
   letter-spacing: 2px;
   color: var(--accent);
 }
 
-.cart__footer {
+.cart__total-block {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
   padding: 20px;
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -313,17 +412,35 @@ body {
   color: var(--text);
 }
 
-.empty-cart {
-  text-align: center;
-  padding: 80px 20px;
+.cart__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
 }
 
-.empty-cart__text {
-  color: var(--text-muted);
-  font-size: 1rem;
-  margin-top: 10px;
+/* ФОРМА ЗАКАЗА */
+.order-form {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: 4px;
+  margin-top: 20px;
 }
 
+.order-form h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+/* ЛОГИН / РЕГИСТРАЦИЯ */
 .login {
   max-width: 420px;
   margin: 0 auto;
@@ -381,10 +498,39 @@ body {
   line-height: 1.8;
 }
 
+.form__hint a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form__hint a:hover {
+  text-decoration: underline;
+}
+
+/* ДАШБОРД */
 .dashboard {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.dash-section {
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.dash-section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  color: var(--accent);
+  text-transform: uppercase;
 }
 
 .dashboard__stats {
@@ -428,6 +574,170 @@ body {
   border-radius: 4px;
 }
 
+/* ЗАКАЗЫ */
+.order-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.order-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+.order-status {
+  padding: 3px 12px;
+  border-radius: 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.order-status--pending {
+  background: rgba(243, 156, 18, 0.15);
+  color: #f39c12;
+  border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.order-status--done {
+  background: rgba(200, 255, 0, 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(200, 255, 0, 0.3);
+}
+
+.order-card__items {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+/* ДЕТАЛИ УСЛУГИ */
+.service-detail {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.service-detail__main {
+  display: flex;
+  gap: 24px;
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.service-detail__main img {
+  width: 300px;
+  height: 240px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+  filter: grayscale(20%);
+}
+
+.service-detail__main h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.service-detail__main p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+/* ОТЗЫВЫ */
+.reviews {
+  margin-top: 40px;
+}
+
+.reviews h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.review {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.review__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.review__head b {
+  font-size: 0.85rem;
+  color: var(--text);
+  letter-spacing: 0.5px;
+}
+
+.review__stars {
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+
+.review p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.review small {
+  color: var(--text-muted);
+  opacity: 0.6;
+  font-size: 0.75rem;
+}
+
+/* СТАТУСЫ */
+.status {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px;
+  letter-spacing: 1px;
+}
+
+.error {
+  text-align: center;
+  color: var(--danger);
+  padding: 40px;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-cart__text {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+/* АДАПТИВ */
 @media (max-width: 768px) {
   .main {
     padding: 20px;
@@ -441,12 +751,20 @@ body {
 
   .navbar__links {
     gap: 16px;
+    order: 3;
+    width: 100%;
+    justify-content: center;
   }
 
   .page-title {
     font-size: 2rem;
   }
 
+  .catalog {
+    grid-template-columns: 1fr;
+  }
+
+  .cart__total-block,
   .cart__footer {
     flex-direction: column;
     gap: 16px;
@@ -456,11 +774,21 @@ body {
   .dashboard__actions {
     flex-direction: column;
   }
-  
-  .nav-link--btn {
-    background: none;
-    border: none;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .filters .form__input {
+    min-width: 100%;
+  }
+
+  .service-detail__main {
+    flex-direction: column;
+  }
+
+  .service-detail__main img {
+    width: 100%;
+    height: 200px;
   }
 }
